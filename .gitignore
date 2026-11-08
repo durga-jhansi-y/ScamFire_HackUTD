@@ -3,3 +3,9 @@ __pycache__/
 backend/models/
 .env
 frontend/dist/
+.venv/
+venv/
+.vscode/
+.DS_Store
+*.log
+.claude/
