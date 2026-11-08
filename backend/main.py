@@ -1,9 +1,11 @@
 """Scam Fire Drill API. Privacy: pasted messages are processed in memory and never written to disk
 or logged. Only the locally-redacted version may ever be sent to the LLM (milestone 5)."""
 import json
+import os
 from pathlib import Path
 
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
 from detector import load_model
@@ -12,6 +14,15 @@ from guidance import TAXONOMY, next_steps
 from redact import redact_pii
 
 app = FastAPI(title="Scam Fire Drill", docs_url="/api/docs", openapi_url="/api/openapi.json")
+
+# The hosted frontend (GitHub Pages) lives on a different origin, so the API must allow it.
+# Set ALLOWED_ORIGINS to a comma-separated list, e.g. https://YOUR-USER.github.io
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[o.strip() for o in os.getenv("ALLOWED_ORIGINS", "http://localhost:5173").split(",") if o.strip()],
+    allow_methods=["GET", "POST"],
+    allow_headers=["Content-Type"],
+)
 _model = None
 
 

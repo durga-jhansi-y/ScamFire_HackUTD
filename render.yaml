@@ -1,0 +1,19 @@
+# Render blueprint for the API. Dashboard: New + > Blueprint > pick this repo.
+services:
+  - type: web
+    name: scamfire-api
+    runtime: python
+    plan: free
+    # Build trains the detector (the model file is not committed) and warms the drill pool.
+    buildCommand: |
+      pip install -r backend/requirements.txt
+      python backend/generate_data.py
+      python backend/evaluate.py
+      cd backend && python -c "import drill; drill.get_pool()"
+    startCommand: uvicorn main:app --app-dir backend --host 0.0.0.0 --port $PORT
+    healthCheckPath: /api/health
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.7
+      - key: ALLOWED_ORIGINS
+        value: https://durga-jhansi-y.github.io

@@ -11,8 +11,11 @@ export type CheckResult = {
   needs_agent: boolean;
 };
 
+/** Empty in dev (Vite proxies /api). On GitHub Pages it is the hosted API's https address. */
+export const API = ((import.meta.env.VITE_API_BASE as string | undefined) ?? "").replace(/\/$/, "");
+
 export async function checkMessage(text: string): Promise<CheckResult> {
-  const res = await fetch("/api/check", {
+  const res = await fetch(`${API}/api/check`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ text }),

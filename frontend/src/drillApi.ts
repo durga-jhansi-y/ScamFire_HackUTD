@@ -1,4 +1,4 @@
-import { Flag } from "./api";
+import { API, Flag } from "./api";
 
 export type DrillCard = {
   id: string;
@@ -19,7 +19,7 @@ export type DrillCard = {
 export type CatStats = Record<string, { seen: number; missed: number }>;
 
 export async function nextCard(stats: CatStats, seenIds: string[]): Promise<DrillCard> {
-  const res = await fetch("/api/drill/next", {
+  const res = await fetch(`${API}/api/drill/next`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ stats, seen_ids: seenIds }),
